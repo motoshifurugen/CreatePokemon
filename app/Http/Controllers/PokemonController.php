@@ -31,8 +31,9 @@ class PokemonController extends Controller {
         }
 
         $pokemons = $query->orderBy('created_at', 'desc')->get();
+        $performance = $this->calcPerformance($pokemons);
 
-        return view('pokemons.index', compact('pokemons'), ['attributes'=>$this->ATTRIBUTES, 'regions'=>$this->REGIONS]);
+        return view('pokemons.index', compact('pokemons'), ['attributes'=>$this->ATTRIBUTES, 'regions'=>$this->REGIONS, 'pf'=>$performance]);
     }
 
     public function create() {
@@ -54,5 +55,18 @@ class PokemonController extends Controller {
 
         $pokemon->save();
         return redirect('pokemons');
+    }
+
+    public function calcPerformance($pokemons){
+        $ret = [
+            'total' => 0
+        ];
+
+        foreach($pokemons as $po) {
+            if($po->size >= 0) {
+                $ret['total'] += 1;
+            }
+        }
+        return $ret;
     }
 }

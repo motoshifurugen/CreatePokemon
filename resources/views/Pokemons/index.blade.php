@@ -73,7 +73,7 @@
         </nav>
     </div>
 
-  <form action="/balances">
+  <form action="/pokemons">
     <table border="1" cellspacing="0" cellpadding="5">
       <tr>
         <th>タイプ</th>
