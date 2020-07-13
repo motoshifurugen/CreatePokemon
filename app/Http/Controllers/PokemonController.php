@@ -19,7 +19,7 @@ class PokemonController extends Controller {
 
     public function index() {
         $user_id = Auth::id(); // ログインユーザIDを取得する
-
+        $user = Auth::user();
         $query = DB::table('pokemon')->where('user_id', $user_id);
 
         if (request('attribute')) {
@@ -33,7 +33,7 @@ class PokemonController extends Controller {
         $pokemons = $query->orderBy('created_at', 'desc')->get();
         $performance = $this->calcPerformance($pokemons);
 
-        return view('pokemons.index', compact('pokemons'), ['attributes'=>$this->ATTRIBUTES, 'regions'=>$this->REGIONS, 'pf'=>$performance]);
+        return view('pokemons.index', compact('pokemons'), ['attributes'=>$this->ATTRIBUTES, 'regions'=>$this->REGIONS, 'pf'=>$performance, 'user'=>$user]);
     }
 
     public function create() {
@@ -43,7 +43,7 @@ class PokemonController extends Controller {
     public function store(Request $request) {
         $pokemon = new Pokemon();
         $pokemon->user_id = Auth::id();
-        $pokemon->name = request('name');
+        $pokemon->pokemon_name = request('pokemon_name');
         $pokemon->attribute = request('attribute');
         $pokemon->region = request('region');
         $pokemon->size = request('size');
@@ -68,5 +68,29 @@ class PokemonController extends Controller {
             }
         }
         return $ret;
+    }
+
+    public function edit(Pokemon $pokemon) {
+        return view('pokemons.edit', compact('pokemon'), ['attributes'=>$this->ATTRIBUTES, 'regions'=>$this->REGIONS]);
+    }
+
+    public function update(Pokemon $pokemon) {
+        $pokemon->user_id = Auth::id();
+        $pokemon->pokemon_name = request('pokemon_name');
+        $pokemon->attribute = request('attribute');
+        $pokemon->region = request('region');
+        $pokemon->size = request('size');
+        $pokemon->weight = request('weight');
+        $pokemon->attack_name = request('attack_name');
+        if(request('attack_description')) {
+            $pokemon->attack_description = request('attack_description');
+        }
+        $pokemon->save();
+        return redirect()->to('pokemons');
+    }
+
+    public function destroy(Pokemon $pokemon) {
+        $pokemon->delete();
+        return redirect()->to('pokemons');
     }
 }

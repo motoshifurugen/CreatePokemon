@@ -26,3 +26,5 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::resource('pokemons', 'PokemonController');
+
+Route::resource('allpokemons', 'AllPokemonController');
