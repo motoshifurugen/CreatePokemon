@@ -105,7 +105,7 @@
   <br/>
 
   <br/>
-  <h4>{{ $user->name }}のポケモン &nbsp; {{ $pf['total'] }}体</h4>
+  <h4>{{ $user->name }}のポケモン &nbsp; 表示中 {{ $pf['total'] }}体 / 全 {{ $count }}体</h4>
 
   <table border="1" cellspacing="0" cellpadding="5">
     <tr align="center">
@@ -138,6 +138,9 @@
       </tr>
     @endforeach
   </table>
+
+  <br />
+  {{ $pokemons->links() }}
 
   <br/>
   <a href="/allpokemons">みんなのポケモンを見る</a>

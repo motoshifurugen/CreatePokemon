@@ -91,6 +91,14 @@
             @endforeach
         </td>
       </tr>
+      <tr>
+        <th>作った人</th>
+        <td>
+            @foreach($pokemon_user as $po_u)
+            <input type="checkbox" name="name[]" value="{{ $po_u->name }}" @if(request('name') && in_array($po_u->name, request('name'))) checked @endif /> {{ $po_u->name }}
+            @endforeach
+        </td>
+      </tr>
       <tr align="center">
         <td colspan="2">
           <button type="submit">検索</button>
@@ -101,7 +109,7 @@
   </form>
 
   <br/>
-  <h4>みんなのポケモン &nbsp; {{ $pf['total'] }}体</h4>
+  <h4>みんなのポケモン &nbsp; 表示中 {{ $pf['total'] }}体 / 全 {{ $count }}体</h4>
 
   <table border="1" cellspacing="0" cellpadding="5">
     <tr align="center">
@@ -127,6 +135,9 @@
       </tr>
     @endforeach
   </table>
+
+  <br />
+  {{ $pokemons->links() }}
 
   <br/>
   <a href="/pokemons">自分のポケモンを見る</a>

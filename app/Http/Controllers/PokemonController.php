@@ -21,6 +21,7 @@ class PokemonController extends Controller {
         $user_id = Auth::id(); // ログインユーザIDを取得する
         $user = Auth::user();
         $query = DB::table('pokemon')->where('user_id', $user_id);
+        $count = $query->count();
 
         if (request('attribute')) {
             $query->whereIn('attribute', request('attribute'));
@@ -30,10 +31,10 @@ class PokemonController extends Controller {
             $query->whereIn('region', request('region'));
         }
 
-        $pokemons = $query->orderBy('created_at', 'desc')->get();
+        $pokemons = $query->orderBy('created_at', 'desc')->paginate(10);
         $performance = $this->calcPerformance($pokemons);
 
-        return view('pokemons.index', compact('pokemons'), ['attributes'=>$this->ATTRIBUTES, 'regions'=>$this->REGIONS, 'pf'=>$performance, 'user'=>$user]);
+        return view('pokemons.index', compact('pokemons'), ['attributes'=>$this->ATTRIBUTES, 'regions'=>$this->REGIONS, 'pf'=>$performance, 'user'=>$user, 'count'=>$count]);
     }
 
     public function create() {

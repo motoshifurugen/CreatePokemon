@@ -20,6 +20,9 @@ class AllPokemonController extends Controller
     {
         $user = Auth::user();
         $query = DB::table('pokemon')->join('users', 'pokemon.user_id', '=', 'users.id');
+        $count = $query->count();
+        // $pokemon_user = $query->distinct()->select('name')->get();
+        // var_dump($pokemon_user);
 
         if (request('attribute')) {
             $query->whereIn('attribute', request('attribute'));
@@ -29,22 +32,35 @@ class AllPokemonController extends Controller
             $query->whereIn('region', request('region'));
         }
 
-        $pokemons = $query->orderBy('pokemon_name', 'asc')->get();
+        if(request('name')) {
+            $query->whereIn('name', request('name'));
+        }
+
+        $pokemons = $query->orderBy('pokemon_name', 'asc')->paginate(10);
+        $pokemon_user = $this->selectUser();
+        var_dump($pokemon_user);
         $performance = $this->calcPerformance($pokemons);
 
-
-        return view('allpokemons.index', compact('pokemons'), ['attributes'=>$this->ATTRIBUTES, 'regions'=>$this->REGIONS, 'pf'=>$performance, 'user'=>$user]);
+        return view('allpokemons.index', compact('pokemons'), ['attributes'=>$this->ATTRIBUTES, 'regions'=>$this->REGIONS, 'user'=>$user, 'count'=>$count, 'pf'=>$performance, 'pokemon_user'=>$pokemon_user]);
     }
 
     public function calcPerformance($pokemons){
         $ret = [
             'total' => 0
         ];
+
         foreach($pokemons as $po) {
             if($po->size >= 0) {
                 $ret['total'] += 1;
             }
         }
         return $ret;
+    }
+
+    public function selectUser() {
+        $query = DB::table('pokemon')->join('users', 'pokemon.user_id', '=', 'users.id');
+        $po_u = $query->distinct()->select('name')->get();
+
+        return $po_u;
     }
 }
